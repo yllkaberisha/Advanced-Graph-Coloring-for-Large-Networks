@@ -115,3 +115,18 @@ def create_gui():
     # Create a button that will start the graph coloring when clicked
     color_button = ttk.Button(root, text="Color Graph", command=start_coloring)
     color_button.pack(pady=20)
+
+    # Create a figure and axis for the graph plot
+    global fig, ax
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Create a canvas to embed the matplotlib figure in the Tkinter window
+    canvas = FigureCanvasTkAgg(fig, master=root)
+    canvas.get_tk_widget().pack()
+
+    # Run the Tkinter event loop
+    root.mainloop()
+
+# Main function to start the program
+if __name__ == "__main__":
+    create_gui()
