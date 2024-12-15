@@ -1,7 +1,10 @@
 
- import random
+import random
 import networkx as nx
 import matplotlib.pyplot as plt
+from tkinter import Tk, ttk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from part1_logic import greedy_coloring, generate_random_graph, visualize_graph
 
 # Global variables
 step = 0  # To track which node we are coloring
@@ -73,3 +76,18 @@ def visualize_graph(graph, colors, step):
             node_color=node_colors, ax=ax)
 
     ax.set_title(f"Graph Coloring - Step {step}")
+    canvas.draw()
+
+# Function to be called when the button is clicked
+def start_coloring():
+    global step
+    step = 0  # Reset step to start coloring from the first node
+    visualize_next_node()  # Start the coloring process
+
+# Function to color the next node in the graph
+def visualize_next_node():
+    global step
+    if step < len(graph):  # Continue coloring until all nodes are colored
+        visualize_graph(graph, colors, step + 1)  # Visualize the graph with the next color
+        step += 1  # Increment step to color the next node
+        root.after(500, visualize_next_node)  # Call this function after 500ms to color the next node
