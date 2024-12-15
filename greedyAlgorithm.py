@@ -108,4 +108,10 @@ def create_gui():
     # Set window size
     root.geometry("800x600")
 
-    
+       # Create a label
+    label = ttk.Label(root, text="Click the button to color the graph")
+    label.pack(pady=20)
+
+    # Create a button that will start the graph coloring when clicked
+    color_button = ttk.Button(root, text="Color Graph", command=start_coloring)
+    color_button.pack(pady=20)
