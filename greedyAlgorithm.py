@@ -91,3 +91,21 @@ def visualize_next_node():
         visualize_graph(graph, colors, step + 1)  # Visualize the graph with the next color
         step += 1  # Increment step to color the next node
         root.after(500, visualize_next_node)  # Call this function after 500ms to color the next node
+
+
+# Set up the GUI using Tkinter
+def create_gui():
+    global step, colors, graph, canvas, ax, root
+    step = 0  # Initialize step count to 0
+    n = 10  # Number of nodes
+    graph = generate_random_graph(n, density=0.3)  # Generate random sparse graph
+    colors = greedy_coloring(graph)  # Apply greedy coloring algorithm
+
+    # Create the main window
+    root = Tk()
+    root.title("Graph Coloring")
+
+    # Set window size
+    root.geometry("800x600")
+
+    
