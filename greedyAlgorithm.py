@@ -1,10 +1,8 @@
-
 import random
 import networkx as nx
 import matplotlib.pyplot as plt
 from tkinter import Tk, ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from part1_logic import greedy_coloring, generate_random_graph, visualize_graph
 
 # Global variables
 step = 0  # To track which node we are coloring
@@ -15,6 +13,7 @@ pos = None  # Store the fixed node positions
 
 # Greedy coloring algorithm
 def greedy_coloring(graph):
+    print(graph)
     n = len(graph)
     result = [-1] * n  # Store the color assigned to each node
     result[0] = 0  # Assign the first color to the first node
@@ -38,6 +37,7 @@ def greedy_coloring(graph):
         available = [False] * n  # Reset the availability array for the next node
     
     return result
+
 # Generate a random sparse graph
 def generate_random_graph(n, density=0.1):
     graph = [[0] * n for _ in range(n)]
@@ -92,7 +92,6 @@ def visualize_next_node():
         step += 1  # Increment step to color the next node
         root.after(500, visualize_next_node)  # Call this function after 500ms to color the next node
 
-
 # Set up the GUI using Tkinter
 def create_gui():
     global step, colors, graph, canvas, ax, root
@@ -100,7 +99,7 @@ def create_gui():
     n = 10  # Number of nodes
     graph = generate_random_graph(n, density=0.3)  # Generate random sparse graph
     colors = greedy_coloring(graph)  # Apply greedy coloring algorithm
-
+    
     # Create the main window
     root = Tk()
     root.title("Graph Coloring")
@@ -108,10 +107,25 @@ def create_gui():
     # Set window size
     root.geometry("800x600")
 
-       # Create a label
+    # Create a label
     label = ttk.Label(root, text="Click the button to color the graph")
     label.pack(pady=20)
 
     # Create a button that will start the graph coloring when clicked
     color_button = ttk.Button(root, text="Color Graph", command=start_coloring)
     color_button.pack(pady=20)
+
+    # Create a figure and axis for the graph plot
+    global fig, ax
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Create a canvas to embed the matplotlib figure in the Tkinter window
+    canvas = FigureCanvasTkAgg(fig, master=root)
+    canvas.get_tk_widget().pack()
+
+    # Run the Tkinter event loop
+    root.mainloop()
+
+# Main function to start the program
+if __name__ == "__main__":
+    create_gui()
