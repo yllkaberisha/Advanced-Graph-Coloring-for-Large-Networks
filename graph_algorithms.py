@@ -63,6 +63,7 @@ def matrix_to_adj_list(matrix):
         for j in range(len(matrix[i])):
             if matrix[i][j] == 1:
                 adj_list[i].append(j)
+    print("adj_list", adj_list)
     return adj_list
 
 
