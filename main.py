@@ -4,7 +4,6 @@ from graph_utils import generate_random_graph, load_graph_from_file, save_graph_
 from graph_algorithms import greedy_coloring, greedy_coloring_by_degree, backtracking_coloring
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
-import pickle
 import networkx as nx  
 
 
@@ -26,8 +25,8 @@ def start_coloring(algorithm):
     elif algorithm == 'degree':
         colors, nodes_order = greedy_coloring_by_degree(graph)
     elif algorithm == 'backtracking':
-        m = max(len(set(sum(graph, []))) for _ in range(len(graph)))  # Estimating the number of colors needed
-        colors = backtracking_coloring(graph, m) 
+        m = 3
+        colors, nodes_order  = backtracking_coloring(graph, m) 
     print("Node order" , nodes_order)
     print("Colors", colors)
     visualize_next_node()
@@ -82,7 +81,9 @@ def visualize_graph(graph, colors, step):
     # Set node colors based on the greedy algorithm result
     node_colors = ['lightgrey'] * n
     for i in range(step):
-        node_colors[nodes_order[i]] = plt.cm.rainbow(colors[i] / (max(colors) + 1)) 
+        if i < len(nodes_order) and i < len(colors):
+            node_colors[nodes_order[i]] = plt.cm.rainbow(colors[i] / (max(colors) + 1)) 
+
 
     # Clear previous plot and redraw the updated graph 
     ax.clear()
