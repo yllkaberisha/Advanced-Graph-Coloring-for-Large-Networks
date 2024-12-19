@@ -4,50 +4,36 @@ import random
 import numpy as np
 from itertools import cycle
 
-# Greedy coloring algorithm
-def greedy_coloring(graph):
-    n = len(graph)
-    result = [-1] * n  # Store the color assigned to each node
-    result[0] = 0  # Assign the first color to the first node
+def greedy_coloring(graph, nodeOrder=None):
+    G = matrix_to_adj_list(graph)
+    n = len(G)
+    coloring = [-1] * n  # Initialize all nodes as uncolored
+
+    if nodeOrder is not None:
+        nodes = nodeOrder
+    else:
+        nodes = range(n);
+    for node in nodes:
+        # Collect colors used by neighbors
+        neighbor_colors = set()
+        for neighbor in G[node]:
+            if coloring[neighbor] != -1:
+                neighbor_colors.add(coloring[neighbor])
+
+       # Assign the smallest available color
+        for color in range(n):
+            if color not in neighbor_colors:
+                coloring[node] = color
+                break
     
-    # A temporary array to mark the availability of colors
-    available = [False] * n
-
-    # Assign colors to all the vertices one by one
-    for u in range(1, n):
-        # Mark the colors of adjacent nodes as unavailable
-        for v in range(n):
-            if graph[u][v] == 1 and result[v] != -1:  # If there's an edge and v is colored
-                available[result[v]] = True
-
-        # Find the first available color
-        color = 0
-        while color < n and available[color]:
-            color += 1
-
-        result[u] = color  # Assign the first available color
-        available = [False] * n  # Reset the availability array for the next node
-    
-    return result
+    return coloring
 
 def greedy_coloring_by_degree(graph):
     G = matrix_to_adj_list(graph)
     nodes_sorted_by_degree = sorted(G, key=lambda node: len(G[node]), reverse=True)
     
     n = len(G)
-    coloring = [-1] * n  # Initialize all nodes as uncolored
-
-    for node in nodes_sorted_by_degree:
-        neighbor_colors = set()
-        for neighbor in G[node]:
-            if coloring[neighbor] != -1:
-                neighbor_colors.add(coloring[neighbor])
-
-        # Find the first available color that is not used by the neighbors
-        for color in range(n):
-            if color not in neighbor_colors:
-                coloring[node] = color
-                break
+    coloring = greedy_coloring(graph, nodes_sorted_by_degree)
 
     # Create the node order based coloring result
     ordered_colors = [coloring[node] for node in nodes_sorted_by_degree]
