@@ -47,11 +47,9 @@ def load_graph_from_file():
         return graph
 
 def adj_list_to_matrix(adj_list):
-    # Get the number of nodes 
     nodes = list(adj_list.keys())
     n = len(nodes)
     
-    # Empty adjacency matrix of size n x n
     adj_matrix = np.zeros((n, n), dtype=int)
 
     for node, neighbors in adj_list.items():

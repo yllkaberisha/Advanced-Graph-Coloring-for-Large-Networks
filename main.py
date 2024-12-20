@@ -16,7 +16,7 @@ nodes_order = []            # Order of which nodes to be colored first
 
 
 def start_coloring(algorithm, gui_mode=False):
-    global step, graph, colors, pos, nodes_order 
+    global step, graph, colors, pos, nodes_order, maxColorsAllowed
     print("Graph ", graph)
     step = 0 
     if algorithm == 'order':
@@ -25,7 +25,7 @@ def start_coloring(algorithm, gui_mode=False):
     elif algorithm == 'degree':
         colors, nodes_order = greedy_coloring_by_degree(graph)
     elif algorithm == 'backtracking':
-        m = int(max(len(neighbors) for neighbors in graph.values()) / 2)  # Estimate maxColorAllowed
+        m = int(maxColorsAllowed.get()) # Get maxColorsAllowed from the input
         colors, nodes_order  = backtracking_coloring(graph, m, gui_mode) 
     print("Node order" , nodes_order)
     print("Colors", colors)
@@ -103,7 +103,7 @@ def visualize_graph(graph, colors, step):
     canvas.draw()
 
 def create_gui():
-    global step, colors, graph, canvas, ax, root, nodes_entry
+    global step, colors, graph, canvas, ax, root, nodes_entry, maxColorsAllowed
     step = 0  
     
     # Create the main window
@@ -151,6 +151,13 @@ def create_gui():
 
     backtracking_button = ttk.Button(button_frame_bottom, text="Backtracking", command=lambda: start_coloring('backtracking',gui_mode=True), style="Large.TButton")
     backtracking_button.pack(side=tk.LEFT, padx=5)
+
+    nodes_label = ttk.Label(button_frame_bottom, text="Max colors for backtracking:", font=("Arial", 14))
+    nodes_label.pack(side=tk.LEFT, padx=5)
+
+    maxColorsAllowed = ttk.Entry(button_frame_bottom, font=("Arial", 14), width=8)
+    maxColorsAllowed.pack(side=tk.LEFT, padx=5)
+    maxColorsAllowed.insert(0, "2") 
 
     # Create a figure and axis for the graph plot
     global fig, ax
