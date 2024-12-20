@@ -8,7 +8,7 @@ Grupi 30
 This project is a Python-based tool for visualizing graph coloring algorithms. It provides an interactive GUI to generate graphs, load graphs from files, save graphs, and visualize graph coloring using different algorithms. The tool supports greedy coloring by node order, greedy coloring by highest degree, and backtracking algorithms.
 
 ## Features
-- **Graph Generation:** Generate random graphs with customizable density.
+- **Graph Generation:** Generate random graphs with customizable nodes.
 - **Load/Save Graphs:** Load graphs from JSON files or save generated graphs.
 - **Visualization:** Visualize the graph coloring process step-by-step.
 - **Algorithms:**
@@ -57,3 +57,15 @@ This project is a Python-based tool for visualizing graph coloring algorithms. I
 - Nodes are initially gray and are assigned colors as they are processed.
 - The number of colors used is displayed at the end of the process.
 
+## Code Structure
+- **Graph Algorithms (`graph_algorithms.py`):** Contains implementations of graph coloring algorithms.
+- **Graph Utilities (`graph_utils.py`):** Handles graph generation, loading, saving, and conversion between adjacency list and matrix.
+- **Main Script:** Combines algorithms and utilities to provide an interactive GUI.
+
+## Example Graphs
+Sample graphs in JSON format are included in the repository. These can be used to test the tool by loading them through the GUI.
+
+## Future Improvements
+- Add support for additional coloring algorithms.
+- Enable export of graph visualization as images.
+- Improve GUI design and responsiveness.
