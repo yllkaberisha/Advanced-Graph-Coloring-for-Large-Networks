@@ -15,7 +15,7 @@ pos = None                  # Fixed node positions
 nodes_order = []            # Order of which nodes to be colored first
 
 
-def start_coloring(algorithm):
+def start_coloring(algorithm, gui_mode=False):
     global step, graph, colors, pos, nodes_order 
     print("Graph ", graph)
     step = 0 
@@ -26,7 +26,7 @@ def start_coloring(algorithm):
         colors, nodes_order = greedy_coloring_by_degree(graph)
     elif algorithm == 'backtracking':
         m = 3
-        colors, nodes_order  = backtracking_coloring(graph, m) 
+        colors, nodes_order  = backtracking_coloring(graph, m, gui_mode) 
     print("Node order" , nodes_order)
     print("Colors", colors)
     visualize_next_node()
@@ -55,10 +55,10 @@ def generate_graph(type):
 
 def visualize_next_node():
     global step
-    if step < len(graph):                         # Coloring until all nodes are colored
+    if step < len(nodes_order):                         # Coloring until all nodes are colored
         visualize_graph(graph, colors, step + 1)  
         step += 1 
-        root.after(500, visualize_next_node)      # Delay of 500ms for animation
+        root.after(500, visualize_next_node)            # Delay of 500ms for animation
 
 def visualize_graph(graph, colors, step):
     global pos, nodes_order
@@ -82,15 +82,23 @@ def visualize_graph(graph, colors, step):
     node_colors = ['lightgrey'] * n
     for i in range(step):
         if i < len(nodes_order) and i < len(colors):
-            node_colors[nodes_order[i]] = plt.cm.rainbow(colors[i] / (max(colors) + 1)) 
+            if colors[i] == -1:
+                node_colors[nodes_order[i]] = 'lightgrey'
+            else:
+                node_colors[nodes_order[i]] = plt.cm.rainbow(colors[i] / (max(colors) + 1)) 
 
-
+   
     # Clear previous plot and redraw the updated graph 
     ax.clear()
     nx.draw(G, pos, with_labels=True, node_size=500, font_size=12,
             node_color=node_colors, ax=ax)
 
-    ax.set_title(f"Graph Coloring - Step {step}")
+    ax.set_title(f"Graph Coloring: Step {step}")
+
+    if step == len(nodes_order):  # Update colors used at the end of coloring
+        unique_colors =  len(set(color for color in colors if color != -1))
+        ax.set_title(f"Graph Coloring: Step {step} - Colors Used: {unique_colors}")
+
     canvas.draw()
 
 def create_gui():
@@ -140,7 +148,7 @@ def create_gui():
     greedy_by_degree_button = ttk.Button(button_frame_bottom, text="Greedy by Highest Degree", command=lambda: start_coloring('degree'), style="Large.TButton")
     greedy_by_degree_button.pack(side=tk.LEFT, padx=5)
 
-    backtracking_button = ttk.Button(button_frame_bottom, text="Backtracking", command=lambda: start_coloring('backtracking'), style="Large.TButton")
+    backtracking_button = ttk.Button(button_frame_bottom, text="Backtracking", command=lambda: start_coloring('backtracking',gui_mode=True), style="Large.TButton")
     backtracking_button.pack(side=tk.LEFT, padx=5)
 
     # Create a figure and axis for the graph plot
@@ -156,7 +164,4 @@ def create_gui():
 # Start the program
 if __name__ == "__main__":
     create_gui()
-
-
-
 
