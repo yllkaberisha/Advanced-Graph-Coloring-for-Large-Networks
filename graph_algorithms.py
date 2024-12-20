@@ -1,12 +1,11 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-import random
+from tkinter import messagebox
 import numpy as np
 from itertools import cycle
 
 def greedy_coloring(graph, nodeOrder=None):
-    G = matrix_to_adj_list(graph)
-    n = len(G)
+    n = len(graph)
     coloring = [-1] * n  # Initialize all nodes as uncolored
 
     if nodeOrder is not None:
@@ -16,7 +15,7 @@ def greedy_coloring(graph, nodeOrder=None):
     for node in nodes:
         # Collect colors used by neighbors
         neighbor_colors = set()
-        for neighbor in G[node]:
+        for neighbor in graph[node]:
             if coloring[neighbor] != -1:
                 neighbor_colors.add(coloring[neighbor])
 
@@ -29,10 +28,8 @@ def greedy_coloring(graph, nodeOrder=None):
     return coloring
 
 def greedy_coloring_by_degree(graph):
-    G = matrix_to_adj_list(graph)
-    nodes_sorted_by_degree = sorted(G, key=lambda node: len(G[node]), reverse=True)
-    
-    n = len(G)
+    nodes_sorted_by_degree = sorted(graph, key=lambda node: len(graph[node]), reverse=True)
+
     coloring = greedy_coloring(graph, nodes_sorted_by_degree)
 
     # Create the node order based coloring result
@@ -41,41 +38,49 @@ def greedy_coloring_by_degree(graph):
     return ordered_colors, nodes_sorted_by_degree
 
 
-
-def matrix_to_adj_list(matrix):
-    adj_list = {}
-    for i in range(len(matrix)):
-        adj_list[i] = []
-        for j in range(len(matrix[i])):
-            if matrix[i][j] == 1:
-                adj_list[i].append(j)
-    print("adj_list", adj_list)
-    return adj_list
-
-
-
-# Backtracking coloring algorithm
-def backtracking_coloring(graph, m, node=0, result=None):
-    if result is None:
-        result = [-1] * len(graph)  # Store the color assigned to each node
-    
+def backtracking_coloring(graph, maxColorAllowed=None, gui_mode=False):
     n = len(graph)
-    
-    if node == n:
-        return result  # All nodes are colored
-    
-    for color in range(m):
-        if is_safe(graph, node, color, result):
-            result[node] = color
-            result = backtracking_coloring(graph, m, node + 1, result)
-            if -1 not in result:
-                return result  # Solution found
-    
-    result[node] = -1  # Backtrack
-    return result
+    nodes_order_backtracking =[]
+    color_order_backtracking = []
+    if maxColorAllowed is None:
+        maxColorAllowed = max(len(set(sum(graph, []))) for _ in range(n))  # Estimate maxColorAllowed if not provided
 
-def is_safe(graph, node, color, result):
-    for neighbor in range(len(graph)):
-        if graph[node][neighbor] == 1 and result[neighbor] == color:
-            return False
-    return True
+    print("Max Color Allowed:", maxColorAllowed)
+    colors = [-1] * n  # Initialize all nodes as uncolored
+
+    def is_valid_color(node, color, colors, G):
+        """Check if no conflicts with neighbors"""
+        for neighbor in G[node]:
+            if colors[neighbor] == color:
+                return False
+        return True
+
+    def backtrack(node, G, maxColorAllowed, colors):
+        if node == len(G):
+            return True  # All nodes have been successfully colored
+        
+        for color in range(maxColorAllowed):
+            if is_valid_color(node, color, colors, G):
+                colors[node] = color
+
+                # For better visualization
+                nodes_order_backtracking.append(node)
+                color_order_backtracking.append(color)
+
+                if backtrack(node + 1, G, maxColorAllowed, colors): # Go to next node
+                    return True
+                colors[node] = -1  # Backtrack
+                # For better visualization
+                nodes_order_backtracking.append(node)
+                color_order_backtracking.append(-1)
+
+        return False
+
+    if backtrack(0, graph, maxColorAllowed, colors):
+        return color_order_backtracking, nodes_order_backtracking
+    else:
+        if gui_mode:
+            messagebox.showinfo("No Solution", f"Solution does not exist for the given number {maxColorAllowed} of colors.")
+        else:
+            print(f"Solution does not exist for the given number of {maxColorAllowed} colors.")
+        return [-1] * n, range(n)  # If coloring fails

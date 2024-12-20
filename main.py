@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
-from graph_utils import generate_random_graph, load_graph_from_file, save_graph_to_file
+from graph_utils import generate_random_graph, load_graph_from_file, save_graph_to_file,adj_list_to_matrix
 from graph_algorithms import greedy_coloring, greedy_coloring_by_degree, backtracking_coloring
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
@@ -25,7 +25,7 @@ def start_coloring(algorithm, gui_mode=False):
     elif algorithm == 'degree':
         colors, nodes_order = greedy_coloring_by_degree(graph)
     elif algorithm == 'backtracking':
-        m = 3
+        m = int(max(len(neighbors) for neighbors in graph.values()) / 2)  # Estimate maxColorAllowed
         colors, nodes_order  = backtracking_coloring(graph, m, gui_mode) 
     print("Node order" , nodes_order)
     print("Colors", colors)
@@ -62,6 +62,7 @@ def visualize_next_node():
 
 def visualize_graph(graph, colors, step):
     global pos, nodes_order
+    graph = adj_list_to_matrix(graph)
     n = len(graph)
     G = nx.Graph()
 
